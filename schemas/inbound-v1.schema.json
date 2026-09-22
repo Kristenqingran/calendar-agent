@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://calendar-agent.local/schemas/inbound-v1.schema.json",
+  "title": "Calendar Agent V1 Inbound Message",
+  "oneOf": [
+    {"$ref": "#/$defs/user_request"},
+    {"$ref": "#/$defs/clarification_response"},
+    {"$ref": "tool-result-v1.schema.json"}
+  ],
+  "$defs": {
+    "user_request": {
+      "type": "object",
+      "required": ["type", "request_id", "conversation_id", "message", "current_time", "assistant_timezone", "source"],
+      "properties": {
+        "type": {"const": "user_request"},
+        "request_id": {"$ref": "common-v1.schema.json#/$defs/id"},
+        "conversation_id": {"$ref": "common-v1.schema.json#/$defs/id"},
+        "message": {"type": "string", "minLength": 1},
+        "current_time": {"type": "string", "format": "date-time"},
+        "assistant_timezone": {"$ref": "common-v1.schema.json#/$defs/iana_timezone"},
+        "source": {"type": "string", "minLength": 1},
+        "device_timezone": {
+          "oneOf": [
+            {"$ref": "common-v1.schema.json#/$defs/iana_timezone"},
+            {"type": "null"}
+          ]
+        },
+        "default_calendar": {"$ref": "common-v1.schema.json#/$defs/default_calendar"}
+      },
+      "additionalProperties": false
+    },
+    "clarification_response": {
+      "type": "object",
+      "required": ["type", "request_id", "conversation_id", "task_id", "reply_to_step_id", "message"],
+      "properties": {
+        "type": {"const": "clarification_response"},
+        "request_id": {"$ref": "common-v1.schema.json#/$defs/id"},
+        "conversation_id": {"$ref": "common-v1.schema.json#/$defs/id"},
+        "task_id": {"$ref": "common-v1.schema.json#/$defs/id"},
+        "reply_to_step_id": {"$ref": "common-v1.schema.json#/$defs/id"},
+        "message": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "type": "final",
+  "request_id": "req_001",
+  "conversation_id": "conv_001",
+  "task_id": "task_001",
+  "status": "failure",
+  "message": "没有完成"
+}

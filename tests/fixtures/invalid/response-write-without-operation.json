@@ -1,0 +1,9 @@
+{
+  "type": "tool_request",
+  "request_id": "req_001",
+  "conversation_id": "conv_001",
+  "task_id": "task_001",
+  "step_id": "step_006",
+  "tool": "delete_calendar_event",
+  "arguments": {"event_id": "event_123"}
+}

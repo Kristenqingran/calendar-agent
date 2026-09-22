@@ -1,0 +1,8 @@
+{
+  "type": "clarification_response",
+  "request_id": "req_002",
+  "conversation_id": "conv_001",
+  "task_id": "task_001",
+  "reply_to_step_id": "step_004",
+  "message": "一个小时"
+}

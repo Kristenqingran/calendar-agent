@@ -1,0 +1,13 @@
+.venv/
+venv/
+.idea/
+.DS_Store
+
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.py[cod]
+*.pyc
+.env
+.obsidian/

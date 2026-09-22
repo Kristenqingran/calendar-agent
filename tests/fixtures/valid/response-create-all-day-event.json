@@ -1,0 +1,17 @@
+{
+  "type": "tool_request",
+  "request_id": "req_001",
+  "conversation_id": "conv_001",
+  "task_id": "task_001",
+  "step_id": "step_006",
+  "operation_id": "op_001",
+  "tool": "create_calendar_event",
+  "arguments": {
+    "title": "休假",
+    "all_day": true,
+    "start_date": "2026-09-05",
+    "end_date": "2026-09-05",
+    "calendar_id": null,
+    "calendar_name": "生活"
+  }
+}

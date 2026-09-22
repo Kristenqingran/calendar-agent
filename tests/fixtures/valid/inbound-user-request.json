@@ -1,0 +1,10 @@
+{
+  "type": "user_request",
+  "request_id": "req_001",
+  "conversation_id": "conv_001",
+  "message": "明天下午三点有什么安排？",
+  "current_time": "2026-09-04T10:00:00+08:00",
+  "assistant_timezone": "Asia/Shanghai",
+  "source": "iphone_shortcut",
+  "default_calendar": {"calendar_id": null, "name": "日历"}
+}

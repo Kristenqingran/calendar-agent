@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://calendar-agent.local/schema.json",
+  "title": "Deprecated Calendar Agent Schema Entry",
+  "description": "Deprecated. Use schemas/inbound-v1.schema.json and schemas/agent-response-v1.schema.json. Canonical rules are defined in docs/protocol-v1.md.",
+  "deprecated": true,
+  "$ref": "schemas/agent-response-v1.schema.json"
+}

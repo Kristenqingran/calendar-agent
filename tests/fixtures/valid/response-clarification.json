@@ -1,0 +1,11 @@
+{
+  "type": "clarification",
+  "request_id": "req_001",
+  "conversation_id": "conv_001",
+  "task_id": "task_001",
+  "step_id": "step_004",
+  "reason": "ambiguous_target",
+  "message": "你指哪一个会议？",
+  "expected_answer": {"type": "candidate_index"},
+  "candidates": [{"event_id": "event_1"}, {"event_id": "event_2"}]
+}

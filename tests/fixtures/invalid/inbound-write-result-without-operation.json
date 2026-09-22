@@ -1,0 +1,11 @@
+{
+  "type": "tool_result",
+  "request_id": "req_003",
+  "conversation_id": "conv_001",
+  "task_id": "task_001",
+  "step_id": "step_006",
+  "tool": "create_reminder",
+  "status": "success",
+  "executed_at": "2026-09-04T10:00:02+08:00",
+  "result": {"reminder_id": "rem_123"}
+}

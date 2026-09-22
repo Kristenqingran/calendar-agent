@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://calendar-agent.local/schemas/reminder-v1.schema.json",
+  "title": "Reminder V1",
+  "$defs": {
+    "reminder": {
+      "type": "object",
+      "required": ["reminder_id", "title", "completed"],
+      "properties": {
+        "reminder_id": {"type": "string", "minLength": 1},
+        "list_id": {"type": ["string", "null"]},
+        "title": {"type": "string", "minLength": 1},
+        "reminder_time": {"type": ["string", "null"], "format": "date-time"},
+        "completed": {"type": "boolean"},
+        "notes": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "reminder_candidate": {
+      "type": "object",
+      "required": ["title"],
+      "properties": {
+        "title": {"type": "string", "minLength": 1},
+        "reminder_time": {"type": ["string", "null"], "format": "date-time"},
+        "list_id": {"type": ["string", "null"]},
+        "notes": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    }
+  }
+}
