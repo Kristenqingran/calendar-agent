@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://calendar-agent.local/schemas/agent-response-v2.schema.json",
+  "title": "Calendar Agent V2 Response",
+  "oneOf": [
+    {"$ref": "#/$defs/clarification"},
+    {"$ref": "#/$defs/final"}
+  ],
+  "$defs": {
+    "clarification": {
+      "type": "object",
+      "required": ["type", "request_id", "conversation_id", "task_id", "step_id", "reason", "message", "expected_answer"],
+      "properties": {
+        "type": {"const": "clarification"},
+        "request_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "conversation_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "task_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "step_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "reason": {
+          "enum": [
+            "missing_required_parameter",
+            "ambiguous_parameter",
+            "ambiguous_target",
+            "schedule_conflict",
+            "possible_duplicate",
+            "tool_result_uncertain",
+            "recovery_decision_required"
+          ]
+        },
+        "message": {"type": "string", "minLength": 1},
+        "missing_fields": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "ambiguous_fields": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "expected_answer": {"type": "object", "minProperties": 1},
+        "candidates": {"type": "array", "items": {"type": "object"}}
+      },
+      "additionalProperties": false
+    },
+    "final": {
+      "type": "object",
+      "required": ["type", "request_id", "conversation_id", "task_id", "status", "message"],
+      "properties": {
+        "type": {"const": "final"},
+        "request_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "conversation_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "task_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "status": {"enum": ["success", "failure", "unknown"]},
+        "message": {"type": "string", "minLength": 1},
+        "result_summary": {"type": ["object", "null"]},
+        "error": {"$ref": "common-v2.schema.json#/$defs/error"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "failure"}}, "required": ["status"]},
+          "then": {"required": ["error"]}
+        }
+      ],
+      "additionalProperties": false
+    }
+  }
+}

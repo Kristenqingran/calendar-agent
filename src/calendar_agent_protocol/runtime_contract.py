@@ -1,25 +1,28 @@
-"""Phase 1 runtime boundaries for the future Agent implementation.
-
-This module defines interfaces only. It does not implement an Agent, an HTTP
-server, an LLM client, a Tool executor, orchestration, or final response
-generation.
-"""
+"""Mac-first V2 runtime and adapter boundaries."""
 
 from __future__ import annotations
 
 from collections.abc import Mapping
 from typing import Any, Protocol, runtime_checkable
 
-from .messages import AgentResponse, InboundMessage, ToolResult, UserRequest
+from .messages import AgentResponse, InboundMessage, RuntimeDecision, RuntimeMessage
 from .tools import ToolRequest
 
 
 @runtime_checkable
 class AgentCore(Protocol):
-    """Boundary from validated inbound messages to one Agent response."""
+    """Public user-turn boundary; internal Tool commands are never HTTP responses."""
 
     def handle(self, message: InboundMessage) -> AgentResponse:
-        """Handle one validated inbound message and return one response."""
+        """Handle a public inbound user message and return Clarification or Final."""
+
+
+@runtime_checkable
+class RuntimeExecutionPort(Protocol):
+    """Internal orchestration boundary, including Tool execution callbacks."""
+
+    def handle(self, message: RuntimeMessage) -> RuntimeDecision | ToolResult:
+        """Handle one user turn or internal ToolResult."""
 
 
 @runtime_checkable
@@ -39,7 +42,7 @@ class LLMAdapter(Protocol):
 
 @runtime_checkable
 class ToolAdapter(Protocol):
-    """Boundary to the external Shortcut/Tool Executor."""
+    """Boundary from an internal ToolRequest to one execution capability."""
 
     def execute(self, request: ToolRequest) -> ToolResult:
         """Execute one request externally and return its validated result."""

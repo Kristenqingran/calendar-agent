@@ -1,4 +1,6 @@
 > **Purpose:** Understand how the Calendar Agent is designed to work before performing risk analysis or test design.
+
+> **状态：HISTORICAL V1 ANALYSIS / SUPERSEDED。** 本分析冻结于 Protocol V1 阶段；当前规范与架构以 [`docs/protocol-v2.md`](docs/protocol-v2.md) 和 ADR-001 为准。本文只保留迁移前分析证据。
 ## 1. System / Runtime Architecture
 
 ### 1.1 System Overview

@@ -1,0 +1,294 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://calendar-agent.local/schemas/tool-request-v2.schema.json",
+  "title": "Calendar Agent V2 Tool Request",
+  "oneOf": [
+    {"$ref": "#/$defs/query_calendar_request"},
+    {"$ref": "#/$defs/query_reminders_request"},
+    {"$ref": "#/$defs/create_calendar_event"},
+    {"$ref": "#/$defs/update_calendar_event"},
+    {"$ref": "#/$defs/delete_calendar_event"},
+    {"$ref": "#/$defs/create_reminder"},
+    {"$ref": "#/$defs/update_reminder"},
+    {"$ref": "#/$defs/delete_reminder"}
+  ],
+  "$defs": {
+    "query_calendar_request": {
+      "type": "object",
+      "required": ["type", "execution_id", "causation_request_id", "conversation_id", "task_id", "step_id", "tool", "purpose", "arguments"],
+      "properties": {
+        "type": {"const": "tool_request"},
+        "execution_id": {"$ref": "common-v2.schema.json#/$defs/execution_id"},
+        "causation_request_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "conversation_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "task_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "step_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "tool": {"const": "query_calendar"},
+        "purpose": {"$ref": "common-v2.schema.json#/$defs/purpose"},
+        "arguments": {
+          "type": "object",
+          "properties": {
+            "start": {"type": "string", "format": "date-time"},
+            "end": {"type": "string", "format": "date-time"},
+            "required_duration_minutes": {"type": "integer", "minimum": 1},
+            "target_id": {"type": "string", "minLength": 1},
+            "candidate": {"type": "object"},
+            "filters": {"type": "object"}
+          },
+          "dependentRequired": {
+            "start": ["end"],
+            "end": ["start"]
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "query_reminders_request": {
+      "type": "object",
+      "required": ["type", "execution_id", "causation_request_id", "conversation_id", "task_id", "step_id", "tool", "purpose", "arguments"],
+      "properties": {
+        "type": {"const": "tool_request"},
+        "execution_id": {"$ref": "common-v2.schema.json#/$defs/execution_id"},
+        "causation_request_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "conversation_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "task_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "step_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "tool": {"const": "query_reminders"},
+        "purpose": {"$ref": "common-v2.schema.json#/$defs/purpose"},
+        "arguments": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": ["query_scope"],
+              "properties": {
+                "query_scope": {"const": "all_incomplete"},
+                "filters": {"type": "object"}
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "required": ["query_scope", "list_id"],
+              "properties": {
+                "query_scope": {"const": "specific_list"},
+                "list_id": {"type": "string", "minLength": 1},
+                "filters": {"type": "object"}
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "required": ["query_scope", "start", "end"],
+              "properties": {
+                "query_scope": {"const": "time_range"},
+                "start": {"type": "string", "format": "date-time"},
+                "end": {"type": "string", "format": "date-time"},
+                "filters": {"type": "object"}
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "create_calendar_event": {
+      "type": "object",
+      "required": ["type", "execution_id", "causation_request_id", "conversation_id", "task_id", "step_id", "operation_id", "tool", "arguments"],
+      "properties": {
+        "type": {"const": "tool_request"},
+        "execution_id": {"$ref": "common-v2.schema.json#/$defs/execution_id"},
+        "causation_request_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "conversation_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "task_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "step_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "operation_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "tool": {"const": "create_calendar_event"},
+        "arguments": {
+          "oneOf": [
+            {
+              "type": "object",
+              "required": ["title", "all_day", "start", "end"],
+              "properties": {
+                "title": {"type": "string", "minLength": 1},
+                "all_day": {"const": false},
+                "start": {"type": "string", "format": "date-time"},
+                "end": {"type": "string", "format": "date-time"},
+                "calendar_id": {"type": ["string", "null"]},
+                "calendar_name": {"type": ["string", "null"]},
+                "location": {"type": ["string", "null"]},
+                "notes": {"type": ["string", "null"]}
+              },
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "required": ["title", "all_day", "start_date", "end_date"],
+              "properties": {
+                "title": {"type": "string", "minLength": 1},
+                "all_day": {"const": true},
+                "start_date": {"$ref": "common-v2.schema.json#/$defs/local_date"},
+                "end_date": {"$ref": "common-v2.schema.json#/$defs/local_date"},
+                "calendar_id": {"type": ["string", "null"]},
+                "calendar_name": {"type": ["string", "null"]},
+                "location": {"type": ["string", "null"]},
+                "notes": {"type": ["string", "null"]}
+              },
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "update_calendar_event": {
+      "type": "object",
+      "required": ["type", "execution_id", "causation_request_id", "conversation_id", "task_id", "step_id", "operation_id", "tool", "arguments"],
+      "properties": {
+        "type": {"const": "tool_request"},
+        "execution_id": {"$ref": "common-v2.schema.json#/$defs/execution_id"},
+        "causation_request_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "conversation_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "task_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "step_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "operation_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "tool": {"const": "update_calendar_event"},
+        "arguments": {
+          "type": "object",
+          "required": ["event_id", "changes"],
+          "properties": {
+            "event_id": {"type": "string", "minLength": 1},
+            "calendar_id": {"type": ["string", "null"]},
+            "changes": {
+              "type": "object",
+              "minProperties": 1,
+              "properties": {
+                "title": {"type": "string", "minLength": 1},
+                "start": {"type": "string", "format": "date-time"},
+                "end": {"type": "string", "format": "date-time"},
+                "all_day": {"type": "boolean"},
+                "start_date": {"$ref": "common-v2.schema.json#/$defs/local_date"},
+                "end_date": {"$ref": "common-v2.schema.json#/$defs/local_date"},
+                "location": {"type": ["string", "null"]},
+                "notes": {"type": ["string", "null"]}
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "delete_calendar_event": {
+      "type": "object",
+      "required": ["type", "execution_id", "causation_request_id", "conversation_id", "task_id", "step_id", "operation_id", "tool", "arguments"],
+      "properties": {
+        "type": {"const": "tool_request"},
+        "execution_id": {"$ref": "common-v2.schema.json#/$defs/execution_id"},
+        "causation_request_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "conversation_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "task_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "step_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "operation_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "tool": {"const": "delete_calendar_event"},
+        "arguments": {
+          "type": "object",
+          "required": ["event_id"],
+          "properties": {
+            "event_id": {"type": "string", "minLength": 1},
+            "calendar_id": {"type": ["string", "null"]}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "create_reminder": {
+      "type": "object",
+      "required": ["type", "execution_id", "causation_request_id", "conversation_id", "task_id", "step_id", "operation_id", "tool", "arguments"],
+      "properties": {
+        "type": {"const": "tool_request"},
+        "execution_id": {"$ref": "common-v2.schema.json#/$defs/execution_id"},
+        "causation_request_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "conversation_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "task_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "step_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "operation_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "tool": {"const": "create_reminder"},
+        "arguments": {
+          "type": "object",
+          "required": ["title", "reminder_time"],
+          "properties": {
+            "title": {"type": "string", "minLength": 1},
+            "reminder_time": {"type": "string", "format": "date-time"},
+            "list_id": {"type": ["string", "null"]},
+            "notes": {"type": ["string", "null"]}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "update_reminder": {
+      "type": "object",
+      "required": ["type", "execution_id", "causation_request_id", "conversation_id", "task_id", "step_id", "operation_id", "tool", "arguments"],
+      "properties": {
+        "type": {"const": "tool_request"},
+        "execution_id": {"$ref": "common-v2.schema.json#/$defs/execution_id"},
+        "causation_request_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "conversation_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "task_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "step_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "operation_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "tool": {"const": "update_reminder"},
+        "arguments": {
+          "type": "object",
+          "required": ["reminder_id", "changes"],
+          "properties": {
+            "reminder_id": {"type": "string", "minLength": 1},
+            "list_id": {"type": ["string", "null"]},
+            "changes": {
+              "type": "object",
+              "minProperties": 1,
+              "properties": {
+                "title": {"type": "string", "minLength": 1},
+                "reminder_time": {"type": ["string", "null"], "format": "date-time"},
+                "completed": {"type": "boolean"},
+                "notes": {"type": ["string", "null"]}
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "delete_reminder": {
+      "type": "object",
+      "required": ["type", "execution_id", "causation_request_id", "conversation_id", "task_id", "step_id", "operation_id", "tool", "arguments"],
+      "properties": {
+        "type": {"const": "tool_request"},
+        "execution_id": {"$ref": "common-v2.schema.json#/$defs/execution_id"},
+        "causation_request_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "conversation_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "task_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "step_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "operation_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+        "tool": {"const": "delete_reminder"},
+        "arguments": {
+          "type": "object",
+          "required": ["reminder_id"],
+          "properties": {
+            "reminder_id": {"type": "string", "minLength": 1},
+            "list_id": {"type": ["string", "null"]}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

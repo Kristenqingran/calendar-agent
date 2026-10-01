@@ -2,10 +2,11 @@ from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
 
-def test_all_v1_schemas_are_valid_draft_2020_12(
+def test_v1_schemas_remain_present_and_all_schemas_are_valid_draft_2020_12(
     schemas: dict[str, dict[str, object]],
 ) -> None:
-    assert len(schemas) == 8
+    assert len([name for name in schemas if name.endswith("-v1.schema.json")]) == 8
+    assert len([name for name in schemas if name.endswith("-v2.schema.json")]) == 9
     for schema in schemas.values():
         assert schema["$schema"] == "https://json-schema.org/draft/2020-12/schema"
         Draft202012Validator.check_schema(schema)

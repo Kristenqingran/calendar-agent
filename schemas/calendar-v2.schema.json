@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://calendar-agent.local/schemas/calendar-v2.schema.json",
+  "title": "Calendar Event V2",
+  "$defs": {
+    "calendar_event": {
+      "oneOf": [
+        {"$ref": "#/$defs/timed_calendar_event"},
+        {"$ref": "#/$defs/all_day_calendar_event"}
+      ]
+    },
+    "timed_calendar_event": {
+      "type": "object",
+      "required": ["event_id", "title", "all_day", "start", "end"],
+      "properties": {
+        "event_id": {"type": "string", "minLength": 1},
+        "calendar_id": {"type": ["string", "null"]},
+        "title": {"type": "string", "minLength": 1},
+        "all_day": {"const": false},
+        "start": {"type": "string", "format": "date-time"},
+        "end": {"type": "string", "format": "date-time"},
+        "location": {"type": ["string", "null"]},
+        "notes": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "all_day_calendar_event": {
+      "type": "object",
+      "required": ["event_id", "title", "all_day", "start_date", "end_date"],
+      "properties": {
+        "event_id": {"type": "string", "minLength": 1},
+        "calendar_id": {"type": ["string", "null"]},
+        "title": {"type": "string", "minLength": 1},
+        "all_day": {"const": true},
+        "start_date": {"$ref": "common-v2.schema.json#/$defs/local_date"},
+        "end_date": {"$ref": "common-v2.schema.json#/$defs/local_date"},
+        "location": {"type": ["string", "null"]},
+        "notes": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "calendar_candidate": {
+      "type": "object",
+      "properties": {
+        "title": {"type": "string", "minLength": 1},
+        "all_day": {"type": "boolean"},
+        "start": {"type": "string", "format": "date-time"},
+        "end": {"type": "string", "format": "date-time"},
+        "start_date": {"$ref": "common-v2.schema.json#/$defs/local_date"},
+        "end_date": {"$ref": "common-v2.schema.json#/$defs/local_date"},
+        "calendar_id": {"type": ["string", "null"]},
+        "location": {"type": ["string", "null"]},
+        "notes": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    }
+  }
+}

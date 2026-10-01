@@ -81,7 +81,6 @@ class OperationStatus(StrEnum):
 
 
 class ResponseType(StrEnum):
-    TOOL_REQUEST = "tool_request"
     CLARIFICATION = "clarification"
     FINAL = "final"
 
@@ -89,7 +88,6 @@ class ResponseType(StrEnum):
 class InboundMessageType(StrEnum):
     USER_REQUEST = "user_request"
     CLARIFICATION_RESPONSE = "clarification_response"
-    TOOL_RESULT = "tool_result"
 
 
 class FinalStatus(StrEnum):

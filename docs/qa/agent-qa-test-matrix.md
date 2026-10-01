@@ -1,5 +1,7 @@
 # Agent QA Test Matrix
 
+> **状态：HISTORICAL V1 QA MATRIX / SUPERSEDED。** 本矩阵按 Protocol V1 的客户端执行模型编写；当前 Mac-first V2 验收边界请以 [`../protocol-v2.md`](../protocol-v2.md) 为准。历史测试风险与观察保留，不作为当前实现要求。
+
 状态：基于当前工作区只读核查（2026-09-16）  
 范围：`docs/protocol-v1.md`、`schemas/`、`docs/superpowers/`、`tests/`、`src/calendar_agent_protocol/` 及 Phase 2 completion plan。  
 限制：本文件只描述测试矩阵；未修改生产代码或现有测试。
@@ -96,4 +98,3 @@
 - 当前状态/持久化实现：`src/calendar_agent_protocol/domain.py`、`persistence.py`、`repository.py`
 - 已发现测试：`tests/test_inbound_models.py`、`test_tool_contracts.py`、`test_response_models.py`、`test_contract_parity.py`、`test_phase2.py`、`test_phase2_task_a.py`、`test_phase2_task_b.py`、`test_domain_models.py`、`test_common_types.py`、`test_schema_meta.py`
 - Phase 2 计划：`docs/superpowers/plans/2026-09-05-phase2-completion.md`
-

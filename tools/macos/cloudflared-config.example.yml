@@ -1,0 +1,9 @@
+# Copy to ~/.cloudflared/config.yml after completing Cloudflare login and
+# creating a named tunnel. Never commit the real credentials-file path.
+tunnel: calendar-agent
+credentials-file: /Users/REPLACE_ME/.cloudflared/<tunnel-uuid>.json
+
+ingress:
+  - hostname: agent.example.com
+    service: http://127.0.0.1:8000
+  - service: http_status:404

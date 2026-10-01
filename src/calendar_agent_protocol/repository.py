@@ -119,6 +119,26 @@ class TaskRepository:
     def get(self, id: str) -> TaskRow | None:
         return self.s.get(TaskRow, id)
 
+    def latest_for_conversation(self, conversation_id: str) -> TaskRow | None:
+        return self.s.scalars(
+            select(TaskRow)
+            .where(TaskRow.conversation_id == conversation_id)
+            .order_by(TaskRow.created_at.desc(), TaskRow.task_id.desc())
+            .limit(1)
+        ).first()
+
+    def waiting_clarification_for_conversation(self, conversation_id: str) -> list[TaskRow]:
+        return list(
+            self.s.scalars(
+                select(TaskRow)
+                .where(
+                    TaskRow.conversation_id == conversation_id,
+                    TaskRow.current_state == TaskStatus.WAITING_CLARIFICATION.value,
+                )
+                .order_by(TaskRow.created_at, TaskRow.task_id)
+            ).all()
+        )
+
     def update_with_version(
         self, id: str, *, expected_version: int, current_step_id: str | None
     ) -> TaskRow:
@@ -291,6 +311,15 @@ class ToolExchangeRepository:
     def get(self, step_id: str) -> ToolExchangeRow | None:
         return self.s.get(ToolExchangeRow, step_id)
 
+    def list_for_task(self, task_id: str) -> list[ToolExchangeRow]:
+        return list(
+            self.s.scalars(
+                select(ToolExchangeRow)
+                .where(ToolExchangeRow.task_id == task_id)
+                .order_by(ToolExchangeRow.created_at, ToolExchangeRow.step_id)
+            ).all()
+        )
+
     def save_request(
         self, *, dependency_parameters: set[str] | None = None, **kw: Any
     ) -> ToolExchangeRow:
@@ -428,6 +457,22 @@ class ClarificationRepository:
         )
         return self.s.scalar(statement)
 
+    def list_for_task(self, task_id: str) -> list[ClarificationRow]:
+        statement = (
+            select(ClarificationRow)
+            .join(TaskStepRow, TaskStepRow.step_id == ClarificationRow.step_id)
+            .where(ClarificationRow.task_id == task_id)
+            .order_by(TaskStepRow.created_at, TaskStepRow.step_id)
+        )
+        return list(self.s.scalars(statement).all())
+
+    def pending_for_task(self, task_id: str) -> list[ClarificationRow]:
+        statement = select(ClarificationRow).where(
+            ClarificationRow.task_id == task_id,
+            ClarificationRow.resolved_at.is_(None),
+        )
+        return list(self.s.scalars(statement).all())
+
     def resolve(self, task_id: str, step_id: str, response: Any) -> ClarificationRow:
         task = self.s.get(TaskRow, task_id)
         if task is None or TaskStatus(task.current_state) in {
@@ -495,3 +540,11 @@ class InboundReceiptRepository:
         self.s.add(r)
         self.s.flush()
         return r, True
+
+    def save_response(self, request_id: str, response_payload: dict[str, Any]) -> InboundReceiptRow:
+        row = self.get(request_id)
+        if row is None:
+            raise KeyError(request_id)
+        row.response_payload = response_payload
+        self.s.flush()
+        return row

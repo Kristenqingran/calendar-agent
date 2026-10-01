@@ -1,0 +1,136 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A10000000000000000000001 /* mac_agent_host.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000011 /* mac_agent_host.swift */; };
+		A10000000000000000000002 /* operation_journal.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000012 /* operation_journal.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A10000000000000000000010 /* MacAgentHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacAgentHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A10000000000000000000011 /* mac_agent_host.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mac_agent_host.swift; sourceTree = "<group>"; };
+		A10000000000000000000012 /* operation_journal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = operation_journal.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A10000000000000000000020 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A10000000000000000000030 = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000031 /* Sources */,
+				A10000000000000000000032 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A10000000000000000000031 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000011 /* mac_agent_host.swift */,
+				A10000000000000000000012 /* operation_journal.swift */,
+			);
+			path = .;
+			sourceTree = "<group>";
+		};
+		A10000000000000000000032 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000010 /* MacAgentHost.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A10000000000000000000040 /* MacAgentHost */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A10000000000000000000060 /* Build configuration list for PBXNativeTarget "MacAgentHost" */;
+			buildPhases = (
+				A10000000000000000000041 /* Sources */,
+				A10000000000000000000020 /* Frameworks */,
+				A10000000000000000000042 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MacAgentHost;
+			productName = MacAgentHost;
+			productReference = A10000000000000000000010 /* MacAgentHost.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A10000000000000000000050 /* Project object */ = {
+			isa = PBXProject;
+			attributes = { LastUpgradeCheck = 2700; };
+			buildConfigurationList = A10000000000000000000070 /* Build configuration list for PBXProject "MacAgentHost" */;
+			compatibilityVersion = "Xcode 15.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (en, Base,);
+			mainGroup = A10000000000000000000030;
+			productRefGroup = A10000000000000000000032 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (A10000000000000000000040 /* MacAgentHost */,);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A10000000000000000000042 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A10000000000000000000041 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000001 /* mac_agent_host.swift in Sources */, A10000000000000000000002 /* operation_journal.swift in Sources */,); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A10000000000000000000061 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {
+			CLANG_ENABLE_MODULES = YES;
+			CODE_SIGN_IDENTITY = "-";
+			CURRENT_PROJECT_VERSION = 1;
+			DEVELOPMENT_TEAM = "";
+			INFOPLIST_FILE = "$(SRCROOT)/MacAgentHost.app/Contents/Info.plist";
+			MACOSX_DEPLOYMENT_TARGET = 13.0;
+			PRODUCT_BUNDLE_IDENTIFIER = "com.calendaragent.mac-host";
+			PRODUCT_NAME = MacAgentHost;
+			SWIFT_VERSION = 5.0;
+		}; name = Debug; };
+		A10000000000000000000062 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {
+			CLANG_ENABLE_MODULES = YES;
+			CODE_SIGN_IDENTITY = "-";
+			CURRENT_PROJECT_VERSION = 1;
+			DEVELOPMENT_TEAM = "";
+			INFOPLIST_FILE = "$(SRCROOT)/MacAgentHost.app/Contents/Info.plist";
+			MACOSX_DEPLOYMENT_TARGET = 13.0;
+			PRODUCT_BUNDLE_IDENTIFIER = "com.calendaragent.mac-host";
+			PRODUCT_NAME = MacAgentHost;
+			SWIFT_VERSION = 5.0;
+		}; name = Release; };
+		A10000000000000000000071 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; SWIFT_VERSION = 5.0; }; name = Debug; };
+		A10000000000000000000072 /* Release */ = {isa = XCBuildConfiguration; buildSettings = { ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; SWIFT_VERSION = 5.0; }; name = Release; };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A10000000000000000000060 /* Build configuration list for PBXNativeTarget "MacAgentHost" */ = {isa = XCConfigurationList; buildConfigurations = (A10000000000000000000061 /* Debug */, A10000000000000000000062 /* Release */,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		A10000000000000000000070 /* Build configuration list for PBXProject "MacAgentHost" */ = {isa = XCConfigurationList; buildConfigurations = (A10000000000000000000071 /* Debug */, A10000000000000000000072 /* Release */,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+/* End XCConfigurationList section */
+	};
+	rootObject = A10000000000000000000050 /* Project object */;
+}

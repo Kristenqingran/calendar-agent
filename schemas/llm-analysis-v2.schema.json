@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://calendar-agent.local/schemas/llm-analysis-v2.schema.json",
+  "title": "Calendar Agent V2 LLM Semantic Analysis",
+  "type": "object",
+  "required": ["actionable", "tasks", "background", "constraints", "needs_clarification", "clarification"],
+  "properties": {
+    "actionable": {"type": "boolean"},
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["sequence", "object", "intent", "batch_write", "parameters"],
+        "properties": {
+          "sequence": {"type": "integer", "minimum": 1},
+          "object": {"$ref": "common-v2.schema.json#/$defs/object"},
+          "intent": {"$ref": "common-v2.schema.json#/$defs/intent"},
+          "batch_write": {"type": "boolean"},
+          "parameters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "required": ["value", "source", "status", "evidence"],
+              "properties": {
+                "value": {},
+                "source": {"type": ["string", "null"], "enum": ["explicit", "context_derived", "default", null]},
+                "status": {"enum": ["valid", "missing", "ambiguous", "invalid"]},
+                "evidence": {"type": ["string", "null"]},
+                "alternatives": {"type": "array", "items": {}}
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "background": {"type": "array", "items": {"type": "string"}},
+    "constraints": {"type": "array", "items": {"type": "string"}},
+    "needs_clarification": {"type": "boolean"},
+    "clarification": {
+      "type": ["object", "null"],
+      "properties": {
+        "reason": {
+          "enum": [
+            "missing_required_parameter",
+            "ambiguous_parameter",
+            "ambiguous_target",
+            "schedule_conflict",
+            "possible_duplicate",
+            "tool_result_uncertain",
+            "recovery_decision_required"
+          ]
+        },
+        "message": {"type": "string", "minLength": 1},
+        "fields": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "expected_answer_type": {"type": "string", "minLength": 1}
+      },
+      "required": ["reason", "message", "fields", "expected_answer_type"],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

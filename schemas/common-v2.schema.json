@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://calendar-agent.local/schemas/common-v2.schema.json",
+  "title": "Calendar Agent V2 Common Types",
+  "$defs": {
+    "execution_id": {"type": "string", "minLength": 3, "maxLength": 128, "pattern": "^exec_[A-Za-z0-9_-]+$"},
+    "id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128,
+      "pattern": "^[a-z]+_[A-Za-z0-9_-]+$"
+    },
+    "date_time": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "iana_timezone": {
+      "type": "string",
+      "minLength": 1,
+      "format": "iana-timezone"
+    },
+    "local_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "time_range": {
+      "type": "object",
+      "required": ["start", "end"],
+      "properties": {
+        "start": {"$ref": "#/$defs/date_time"},
+        "end": {"$ref": "#/$defs/date_time"}
+      },
+      "additionalProperties": false
+    },
+    "object": {
+      "enum": ["calendar_event", "reminder"]
+    },
+    "intent": {
+      "enum": ["query", "create", "update", "delete"]
+    },
+    "tool": {
+      "enum": [
+        "query_calendar",
+        "query_reminders",
+        "create_calendar_event",
+        "update_calendar_event",
+        "delete_calendar_event",
+        "create_reminder",
+        "update_reminder",
+        "delete_reminder"
+      ]
+    },
+    "query_tool": {
+      "enum": ["query_calendar", "query_reminders"]
+    },
+    "write_tool": {
+      "enum": [
+        "create_calendar_event",
+        "update_calendar_event",
+        "delete_calendar_event",
+        "create_reminder",
+        "update_reminder",
+        "delete_reminder"
+      ]
+    },
+    "purpose": {
+      "enum": [
+        "answer_query",
+        "check_conflict",
+        "detect_duplicate",
+        "find_availability",
+        "resolve_target",
+        "verify_state"
+      ]
+    },
+    "query_scope": {
+      "enum": ["all_incomplete", "specific_list", "time_range"]
+    },
+    "default_calendar": {
+      "type": "object",
+      "required": ["calendar_id", "name"],
+      "properties": {
+        "calendar_id": {"type": ["string", "null"], "minLength": 1},
+        "name": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "tool_status": {
+      "enum": ["success", "failed", "unknown"]
+    },
+    "task_status": {
+      "enum": [
+        "received",
+        "validating_input",
+        "analyzing",
+        "planning",
+        "waiting_tool_result",
+        "validating_tool_result",
+        "waiting_clarification",
+        "analyzing_clarification",
+        "pre_execution_check",
+        "verifying_final_state",
+        "recovering",
+        "succeeded",
+        "failed",
+        "unknown"
+      ]
+    },
+    "operation_status": {
+      "enum": [
+        "planned",
+        "dispatched",
+        "success",
+        "failed",
+        "unknown",
+        "verified_success",
+        "verified_failure"
+      ]
+    },
+    "error": {
+      "type": "object",
+      "properties": {
+        "code": {"type": "string", "minLength": 1},
+        "message": {"type": "string", "minLength": 1},
+        "retryable": {"type": "boolean"},
+        "details": {"type": ["object", "null"]}
+      },
+      "required": ["code", "message", "retryable"],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://calendar-agent.local/schemas/tool-result-v2.schema.json",
+  "title": "Calendar Agent V2 Tool Result",
+  "type": "object",
+  "required": ["type", "execution_id", "causation_request_id", "conversation_id", "task_id", "step_id", "tool", "status", "executed_at"],
+  "properties": {
+    "type": {"const": "tool_result"},
+    "execution_id": {"$ref": "common-v2.schema.json#/$defs/execution_id"},
+    "causation_request_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+    "conversation_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+    "task_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+    "step_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+    "operation_id": {"$ref": "common-v2.schema.json#/$defs/id"},
+    "tool": {"$ref": "common-v2.schema.json#/$defs/tool"},
+    "status": {"$ref": "common-v2.schema.json#/$defs/tool_status"},
+    "executed_at": {"type": "string", "format": "date-time"},
+    "queried_range": {"$ref": "common-v2.schema.json#/$defs/time_range"},
+    "query_scope": {"$ref": "common-v2.schema.json#/$defs/query_scope"},
+    "fetched_at": {"type": "string", "format": "date-time"},
+    "results": {"type": "array", "items": {"type": "object"}},
+    "result": {"type": "object"},
+    "error": {"$ref": "common-v2.schema.json#/$defs/error"}
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "tool": {"const": "query_calendar"},
+          "status": {"const": "success"}
+        },
+        "required": ["tool", "status"]
+      },
+      "then": {"required": ["queried_range", "fetched_at", "results"]}
+    },
+    {
+      "if": {
+        "properties": {
+          "tool": {"const": "query_reminders"},
+          "status": {"const": "success"}
+        },
+        "required": ["tool", "status"]
+      },
+      "then": {"required": ["query_scope"]}
+    },
+    {
+      "if": {
+        "properties": {
+          "tool": {"const": "query_reminders"},
+          "status": {"const": "success"}
+        },
+        "required": ["tool", "status"]
+      },
+      "then": {"required": ["fetched_at", "results"]}
+    },
+    {
+      "if": {
+        "properties": {
+          "tool": {"const": "query_reminders"},
+          "query_scope": {"const": "time_range"}
+        },
+        "required": ["tool", "query_scope"]
+      },
+      "then": {"required": ["queried_range"]}
+    },
+    {
+      "if": {"properties": {"tool": {"$ref": "common-v2.schema.json#/$defs/write_tool"}}, "required": ["tool"]},
+      "then": {"required": ["operation_id"]}
+    },
+    {
+      "if": {
+        "properties": {
+          "tool": {"$ref": "common-v2.schema.json#/$defs/write_tool"},
+          "status": {"const": "success"}
+        },
+        "required": ["tool", "status"]
+      },
+      "then": {"required": ["result"]}
+    },
+    {
+      "if": {"properties": {"status": {"enum": ["failed", "unknown"]}}, "required": ["status"]},
+      "then": {"required": ["error"]}
+    }
+  ],
+  "additionalProperties": false
+}

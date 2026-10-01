@@ -1,4 +1,6 @@
-# Runtime Contract V1
+# Runtime Contract V1（Historical）
+
+> **状态：HISTORICAL / SUPERSEDED。** 本文记录 Protocol V1 阶段的 Runtime 边界，内容中“客户端执行 Tool”“ToolResult 是外部 inbound”等规则不适用于当前 Mac-first Protocol V2。当前规范请见 [`protocol-v2.md`](protocol-v2.md) 与 [`architecture/adr/ADR-001-mac-first-tool-execution.md`](architecture/adr/ADR-001-mac-first-tool-execution.md)。本文保留用于历史追溯，不作为当前实现依据。
 
 状态：Phase 1 boundary definition  
 依据：`docs/protocol-v1.md`、现有 Pydantic models、现有 state machine、现有 Repository。

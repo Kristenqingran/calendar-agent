@@ -65,7 +65,8 @@ def test_write_tool_result_requires_operation_id() -> None:
         ToolResult.model_validate(
             {
                 "type": "tool_result",
-                "request_id": "req_003",
+                "execution_id": "exec_003",
+                "causation_request_id": "req_003",
                 "conversation_id": "conv_001",
                 "task_id": "task_001",
                 "step_id": "step_005",
@@ -82,7 +83,8 @@ def test_successful_non_time_range_reminder_result_needs_no_range(scope: str) ->
     result = ToolResult.model_validate(
         {
             "type": "tool_result",
-            "request_id": "req_003",
+            "execution_id": "exec_003",
+            "causation_request_id": "req_003",
             "conversation_id": "conv_001",
             "task_id": "task_001",
             "step_id": "step_005",
@@ -102,7 +104,8 @@ def test_successful_time_range_reminder_result_requires_range() -> None:
         ToolResult.model_validate(
             {
                 "type": "tool_result",
-                "request_id": "req_003",
+                "execution_id": "exec_003",
+                "causation_request_id": "req_003",
                 "conversation_id": "conv_001",
                 "task_id": "task_001",
                 "step_id": "step_005",
@@ -120,7 +123,8 @@ def test_failed_query_with_empty_results_is_still_failed() -> None:
     result = ToolResult.model_validate(
         {
             "type": "tool_result",
-            "request_id": "req_003",
+            "execution_id": "exec_003",
+            "causation_request_id": "req_003",
             "conversation_id": "conv_001",
             "task_id": "task_001",
             "step_id": "step_005",

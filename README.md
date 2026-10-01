@@ -1,84 +1,80 @@
-# Calendar Agent V1（日程管家）
+# Calendar Agent（Mac-first Personal Agent）
 
-Calendar Agent 接收客户端传入的自然语言日程请求和上下文，识别 Calendar Event 或 Reminder 的 Query、Create、Update、Delete 意图，并返回结构化 `tool_request`、`clarification`或 `final`。
+当前规范为 [`docs/protocol-v2.md`](docs/protocol-v2.md)，当前执行架构决策见 [`docs/architecture/adr/ADR-001-mac-first-tool-execution.md`](docs/architecture/adr/ADR-001-mac-first-tool-execution.md)。[`docs/protocol-v1.md`](docs/protocol-v1.md) 与 `schemas/*-v1.schema.json` 原样保留为冻结历史版本，不定义当前执行边界。
 
-V1 的唯一规范是 [`docs/protocol-v1.md`](docs/protocol-v1.md)。本 README 只提供使用摘要，不定义独立规则。
-
-## V1 数据流
+## 当前架构
 
 ```text
-iPhone Shortcut
-→ HTTP API
-→ Schedule Agent
-→ Calendar / Reminders Tool Request
-→ Shortcut 本地执行 Tool
-→ Tool Result 回传 Agent
-→ clarification / final
+iPhone / Watch / Siri / Shortcut
+→ HTTP /agent（鉴权与请求边界）
+→ AgentRuntime → Planner / Workflow
+→ ToolDispatcher → MacAgentHostAdapter
+→ MacAgentHost.app → CapabilityRegistry
+→ CalendarCapability → EventKit / macOS Calendar
+→ 内部 ToolResult → VerificationService → Final
+→ HTTP response → 用户客户端
 ```
 
-Agent 后端不持有 Apple Calendar / Reminders 权限。所有真实读取和写入均由 iPhone Shortcut 本地执行。
+客户端只传用户请求并显示/朗读 Clarification 或 Final。ToolRequest/ToolResult 是 Agent 内部执行合同，不是返回给 Shortcut 执行的公开动作协议。MacAgentHost 是本机执行 Host；当前路径不依赖 VPS、WebSocket、CalDAV 或 iCloud token。
 
-## 支持范围
+## 当前实现范围
 
-- Object：`calendar_event`、`reminder`
-- Intent：`query`、`create`、`update`、`delete`
-- 查询 Tool：`query_calendar`、`query_reminders`
-- 写 Tool：Calendar Event 与 Reminder 的 Create、Update、Delete
-- 顶层响应：`tool_request`、`clarification`、`final`
-- 有限、串行的多步骤任务；每次最多返回一个 Tool Request
-- 明确表达的全天 Calendar Event
-- Reminder 查询范围：`all_incomplete`、`specific_list`、`time_range`
+- 已实现：Calendar Event Create；通过 EventKit 创建后以真实 Calendar Query 验证。
+- 已实现：Create 所需的 `query_calendar` / `purpose=verify_state`。
+- 已实现：Clarification multi-turn resume；客户端携带原 `conversation_id`，Server 从 SQLite 恢复同一 Task，完成澄清后继续现有 Calendar Create/Verification。
+- 未实现：Reminder、Calendar Update/Delete、其他 Capability。
+- MacAgentHost 已实现本机持久化 operation journal；EventKit 与 journal 之间的 crash window 仍是开放可靠性问题，不提供 exactly-once 保证。
+- `DemoLLM` 是确定性双语 Demo 实现，不等同真实 LLM provider。
+- Mock Adapter 只用于自动化测试；Server 默认走本机 MacAgentHost。
 
-V1 不使用 Hermes，不接入 Gmail、Feishu 或 Research Agent，不使用复杂多 Agent，不执行高风险批量删除或批量修改。
+## 本地启动
 
-## 核心规则摘要
+```bash
+PYTHONPATH=src .venv/bin/python -m calendar_agent_protocol.server
+```
 
-- LLM 负责自然语言理解和语义判断。
-- Schema 校验、状态管理、幂等、Tool Result 校验、安全门和成功判定由代码负责。
-- 可以唯一推导，但不得猜测关键日期、时间、时长或目标。
-- Calendar Event 不使用默认时长。
-- 未明确表达全天时，不得因缺少具体时间而自动创建全天 Event。
-- Reminder Create / Update 前必须查询 Calendar 并检查时间合理性。
-- 所有 Tool Result 必须回传 Agent。
-- 所有 Create / Update / Delete 在成功前必须通过 `verify_state`确认真实状态。
-- Tool Success、LLM 输出或 Tool Request 本身都不等于 Task Success。
-- 相同逻辑写操作重试必须复用原 `operation_id`。
+默认监听 `127.0.0.1:8000`。认证与监听设置通过受保护的本机环境文件配置；不要把 API token 写入仓库或聊天。MacAgentHost 可执行路径通过 `MAC_AGENT_HOST_EXECUTABLE` 指定，Calendar 创建会触发真实系统副作用，自动化测试不运行真实 Calendar 写入。
 
-## 入站消息
+## HTTP 请求
 
-- `user_request`
-- `clarification_response`
-- `tool_result`
+已有 Shortcut 的简化格式仍作为迁移兼容入口：
 
-用户请求采用 `message`、`current_time`、`assistant_timezone`、`source`等 V1 字段；旧字段 `text`、`now`、`timezone`、`calendar`不兼容。
+```json
+{
+  "user_request": "明天下午3点和 Bob 开一个小时的会",
+  "request_id": "req_iphone_0123456789",
+  "conversation_id": "conv_iphone_0123456789",
+  "assistant_timezone": "Asia/Shanghai"
+}
+```
 
-`default_calendar`是包含 `calendar_id`和 `name`的对象。`calendar_id`允许为空；Calendar 名称不得冒充稳定 ID。
-
-## Agent 响应
-
-- `tool_request`：要求客户端执行一个查询或写 Tool。
-- `clarification`：暂停当前任务，请求用户补充或确认。
-- `final`：任务终态，状态为 `success`、`failure`或 `unknown`。
-
-客户端必须把 Tool Result 连同任务关联 ID 回传 Agent。写操作还必须回传原 `operation_id`。
+第二轮及后续回答继续 POST `/agent`，复用首轮响应中的 `conversation_id`；`request_id` 可省略并由 Server 为每个新 inbound 请求生成。若要安全重试同一 HTTP 请求，应显式提交同一个 `request_id` 和相同请求内容。客户端不传 task/step/operation/execution ID。API 只返回 `clarification` 或 `final`；不能把 ToolRequest 直接暴露为最终响应。没有唯一待续接澄清时 Server 返回受控错误，不会新建任务或执行写入。
 
 ## Schema
 
-- [`schemas/inbound-v1.schema.json`](schemas/inbound-v1.schema.json)
-- [`schemas/agent-response-v1.schema.json`](schemas/agent-response-v1.schema.json)
-- [`schemas/tool-request-v1.schema.json`](schemas/tool-request-v1.schema.json)
-- [`schemas/tool-result-v1.schema.json`](schemas/tool-result-v1.schema.json)
-- [`schemas/common-v1.schema.json`](schemas/common-v1.schema.json)
-- [`schemas/calendar-v1.schema.json`](schemas/calendar-v1.schema.json)
-- [`schemas/reminder-v1.schema.json`](schemas/reminder-v1.schema.json)
-- [`schemas/llm-analysis-v1.schema.json`](schemas/llm-analysis-v1.schema.json)
+- 外部请求：[`schemas/agent-http-request-v2.schema.json`](schemas/agent-http-request-v2.schema.json)
+- 外部消息：[`schemas/inbound-v2.schema.json`](schemas/inbound-v2.schema.json)
+- 外部响应：[`schemas/agent-response-v2.schema.json`](schemas/agent-response-v2.schema.json)
+- 内部执行：[`schemas/tool-request-v2.schema.json`](schemas/tool-request-v2.schema.json)、[`schemas/tool-result-v2.schema.json`](schemas/tool-result-v2.schema.json)
+- 共用/领域/分析：`schemas/*-v2.schema.json`
 
-根目录 `schema.json`已经废弃，仅保留为指向版本化 Agent Response Schema 的兼容入口。
+## 常用入口
 
-## 设计文档
+- 当前协议：[`docs/protocol-v2.md`](docs/protocol-v2.md)
+- 架构决策：[`docs/architecture/adr/ADR-001-mac-first-tool-execution.md`](docs/architecture/adr/ADR-001-mac-first-tool-execution.md)
+- QA 缺陷记录：[`docs/qa/07-defects.md`](docs/qa/07-defects.md)
+- 历史 Protocol V1：[`docs/protocol-v1.md`](docs/protocol-v1.md)
 
-- [`01-岗位卡.md`](01-岗位卡.md)
-- [`02-工作流卡片.md`](02-工作流卡片.md)
-- [`02-工作流程.md`](02-工作流程.md)
-- [`03-流程图.md`](03-流程图.md)
-- [`docs/protocol-v1.md`](docs/protocol-v1.md)
+## 本地运行数据
+
+本地 Agent Server 使用相对于 Server 工作目录的 `calendar-agent.db`。当前项目目录下数据库路径通常为：
+
+```text
+/Users/wangkristen/Agents_project/calendar-agent/calendar-agent.db
+```
+
+Task 数据位于 `tasks` 表。启动目录或项目路径变化时，SQLite 相对路径也会变化。只读列出表名：
+
+```bash
+sqlite3 -readonly calendar-agent.db '.tables'
+```

@@ -9,6 +9,8 @@ from .tools import ToolRequest
 from .types import (
     DefaultCalendar,
     ErrorModel,
+    ExecutionId,
+    CauseRequestId,
     IanaTimezone,
     NonEmptyString,
     OffsetDateTime,
@@ -42,7 +44,8 @@ class ClarificationResponse(StrictModel):
 
 class ToolResult(StrictModel):
     type: Literal["tool_result"]
-    request_id: ProtocolId
+    execution_id: ExecutionId
+    causation_request_id: CauseRequestId
     conversation_id: ProtocolId
     task_id: ProtocolId
     step_id: ProtocolId
@@ -83,7 +86,7 @@ class ToolResult(StrictModel):
 
 
 InboundMessage = Annotated[
-    UserRequest | ClarificationResponse | ToolResult,
+    UserRequest | ClarificationResponse,
     Field(discriminator="type"),
 ]
 
@@ -119,4 +122,6 @@ class Final(StrictModel):
         return self
 
 
-AgentResponse = ToolRequest | Clarification | Final
+AgentResponse = Clarification | Final
+RuntimeDecision = ToolRequest | AgentResponse
+RuntimeMessage = InboundMessage | ToolResult

@@ -9,6 +9,8 @@ from .enums import Purpose, QueryScope, Tool
 from .types import (
     NonEmptyString,
     OffsetDateTime,
+    ExecutionId,
+    CauseRequestId,
     OperationId,
     ProtocolId,
     StableId,
@@ -172,7 +174,8 @@ class DeleteReminderArguments(StrictModel):
 
 class ToolRequestBase(StrictModel):
     type: Literal["tool_request"]
-    request_id: ProtocolId
+    execution_id: ExecutionId
+    causation_request_id: CauseRequestId
     conversation_id: ProtocolId
     task_id: ProtocolId
     step_id: ProtocolId

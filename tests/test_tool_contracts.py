@@ -3,11 +3,12 @@ from copy import deepcopy
 import pytest
 from pydantic import TypeAdapter, ValidationError
 
-from calendar_agent_protocol.messages import AgentResponse
+from calendar_agent_protocol.tools import ToolRequest
 
 BASE = {
     "type": "tool_request",
-    "request_id": "req_001",
+    "execution_id": "exec_001",
+    "causation_request_id": "req_001",
     "conversation_id": "conv_001",
     "task_id": "task_001",
     "step_id": "step_001",
@@ -35,7 +36,7 @@ BASE = {
 )
 def test_query_tool_contracts(tool: str, arguments: dict[str, object]) -> None:
     payload = BASE | {"tool": tool, "purpose": "answer_query", "arguments": arguments}
-    assert TypeAdapter(AgentResponse).validate_python(payload)
+    assert TypeAdapter(ToolRequest).validate_python(payload)
 
 
 @pytest.mark.parametrize(
@@ -84,7 +85,7 @@ def test_write_tool_contracts(tool: str, arguments: dict[str, object]) -> None:
         "tool": tool,
         "arguments": arguments,
     }
-    assert TypeAdapter(AgentResponse).validate_python(payload)
+    assert TypeAdapter(ToolRequest).validate_python(payload)
 
 
 def test_timed_event_cannot_use_all_day_fields() -> None:
@@ -99,7 +100,7 @@ def test_timed_event_cannot_use_all_day_fields() -> None:
         },
     }
     with pytest.raises(ValidationError):
-        TypeAdapter(AgentResponse).validate_python(payload)
+        TypeAdapter(ToolRequest).validate_python(payload)
 
 
 def test_all_day_event_cannot_use_timed_fields() -> None:
@@ -114,7 +115,7 @@ def test_all_day_event_cannot_use_timed_fields() -> None:
         },
     }
     with pytest.raises(ValidationError):
-        TypeAdapter(AgentResponse).validate_python(payload)
+        TypeAdapter(ToolRequest).validate_python(payload)
 
 
 def test_calendar_name_is_not_accepted_as_calendar_id_substitute() -> None:
@@ -129,7 +130,7 @@ def test_calendar_name_is_not_accepted_as_calendar_id_substitute() -> None:
             "calendar_name": "工作",
         },
     }
-    parsed = TypeAdapter(AgentResponse).validate_python(payload)
+    parsed = TypeAdapter(ToolRequest).validate_python(payload)
     assert parsed.arguments.calendar_id is None  # type: ignore[union-attr]
     assert parsed.arguments.calendar_name == "工作"  # type: ignore[union-attr]
 
@@ -141,7 +142,7 @@ def test_update_requires_stable_target_id() -> None:
         "arguments": {"changes": {"title": "改名"}},
     }
     with pytest.raises(ValidationError):
-        TypeAdapter(AgentResponse).validate_python(payload)
+        TypeAdapter(ToolRequest).validate_python(payload)
 
 
 def test_delete_requires_stable_target_id() -> None:
@@ -151,7 +152,7 @@ def test_delete_requires_stable_target_id() -> None:
         "arguments": {"title": "交报告"},
     }
     with pytest.raises(ValidationError):
-        TypeAdapter(AgentResponse).validate_python(payload)
+        TypeAdapter(ToolRequest).validate_python(payload)
 
 
 def test_extra_fields_are_rejected() -> None:
@@ -164,4 +165,4 @@ def test_extra_fields_are_rejected() -> None:
         }
     )
     with pytest.raises(ValidationError):
-        TypeAdapter(AgentResponse).validate_python(payload)
+        TypeAdapter(ToolRequest).validate_python(payload)

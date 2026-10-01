@@ -2,15 +2,19 @@ import pytest
 from pydantic import TypeAdapter, ValidationError
 
 from calendar_agent_protocol.messages import AgentResponse
+from calendar_agent_protocol.tools import ToolRequest
 
 
 def parse(payload: dict[str, object]) -> object:
+    if payload.get("type") == "tool_request":
+        return TypeAdapter(ToolRequest).validate_python(payload)
     return TypeAdapter(AgentResponse).validate_python(payload)
 
 
 BASE = {
     "type": "tool_request",
-    "request_id": "req_001",
+    "execution_id": "exec_001",
+    "causation_request_id": "req_001",
     "conversation_id": "conv_001",
     "task_id": "task_001",
     "step_id": "step_001",

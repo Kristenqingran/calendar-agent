@@ -1,5 +1,7 @@
 # 02 Risk Analysis
 
+> **状态：HISTORICAL V1 QA ARTIFACT / SUPERSEDED。** 当前架构边界见 [`docs/protocol-v2.md`](docs/protocol-v2.md)；本文件保留 V1 风险分析记录。
+
 > QA Baseline Artifact — calendar-agent V1
 >
 > 本文件独立记录 Risk Analysis。内容来源于 `01-spec-analysis.md` 已确认的 Spec / Protocol / Tool / Lifecycle 分析。

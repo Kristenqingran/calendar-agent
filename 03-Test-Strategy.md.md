@@ -1,5 +1,7 @@
 # 03 Test Strategy
 
+> **状态：HISTORICAL V1 QA ARTIFACT / SUPERSEDED。** 当前架构边界见 [`docs/protocol-v2.md`](docs/protocol-v2.md)；本文件保留 V1 测试策略记录。
+
 > QA Baseline Artifact — calendar-agent V1
 >
 > 本文件定义如何验证 `calendar-agent` 的行为与风险。它承接 `01-spec-analysis.md` 与 `02-risk-analysis.md`，但不生成具体 Test Case，也不记录实际 Test Result。

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://calendar-agent.local/schema.json",
   "title": "Deprecated Calendar Agent Schema Entry",
-  "description": "Deprecated. Use schemas/inbound-v1.schema.json and schemas/agent-response-v1.schema.json. Canonical rules are defined in docs/protocol-v1.md.",
+  "description": "Deprecated compatibility entry. Current contracts are in schemas/*-v2.schema.json and canonical rules are defined in docs/protocol-v2.md. Protocol V1 is retained as frozen history.",
   "deprecated": true,
-  "$ref": "schemas/agent-response-v1.schema.json"
+  "$ref": "schemas/agent-response-v2.schema.json"
 }

@@ -8,6 +8,9 @@ from pydantic import AfterValidator, BaseModel, ConfigDict, Field, model_validat
 
 ProtocolId = Annotated[str, Field(min_length=3, max_length=128, pattern=r"^[a-z]+_[A-Za-z0-9_-]+$")]
 RequestId = ProtocolId
+ExecutionId = Annotated[str, Field(min_length=3, max_length=128, pattern=r"^exec_[A-Za-z0-9_-]+$")]
+OperationExecutionId = ExecutionId
+CauseRequestId = ProtocolId
 ConversationId = ProtocolId
 TaskId = ProtocolId
 StepId = ProtocolId
